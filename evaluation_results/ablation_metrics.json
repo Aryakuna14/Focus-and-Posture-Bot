@@ -1,0 +1,62 @@
+{
+  "(A) Vision Only": {
+    "accuracy": 0.9745,
+    "macro_f1": 0.9717,
+    "macro_precision": 0.967,
+    "macro_recall": 0.9771,
+    "macro_fpr": 0.0092,
+    "macro_fnr": 0.0229,
+    "per_class_f1": {
+      "decaying_posture": 0.9596,
+      "good_posture": 0.9718,
+      "slouching": 0.9695,
+      "tech_neck": 0.986
+    },
+    "per_class_auc": {
+      "decaying_posture": 0.9996,
+      "good_posture": 0.998,
+      "slouching": 0.9984,
+      "tech_neck": 0.9997
+    }
+  },
+  "(B) Vision + Activity": {
+    "accuracy": 0.978,
+    "macro_f1": 0.9693,
+    "macro_precision": 0.9637,
+    "macro_recall": 0.9757,
+    "macro_fpr": 0.0077,
+    "macro_fnr": 0.0243,
+    "per_class_f1": {
+      "decaying_posture": 0.9347,
+      "good_posture": 0.9782,
+      "slouching": 0.9754,
+      "tech_neck": 0.989
+    },
+    "per_class_auc": {
+      "decaying_posture": 0.9995,
+      "good_posture": 0.9987,
+      "slouching": 0.9981,
+      "tech_neck": 0.9997
+    }
+  },
+  "(C) Full System (ANGELINA)": {
+    "accuracy": 0.9182,
+    "macro_f1": 0.8913,
+    "macro_precision": 0.9279,
+    "macro_recall": 0.8694,
+    "macro_fpr": 0.0305,
+    "macro_fnr": 0.1306,
+    "per_class_f1": {
+      "decaying_posture": 0.7883,
+      "good_posture": 0.9232,
+      "slouching": 0.9063,
+      "tech_neck": 0.9472
+    },
+    "per_class_auc": {
+      "decaying_posture": 0.9745,
+      "good_posture": 0.9924,
+      "slouching": 0.9903,
+      "tech_neck": 0.9969
+    }
+  }
+}

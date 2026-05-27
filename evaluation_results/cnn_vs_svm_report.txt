@@ -1,0 +1,42 @@
+=================================================================
+  ANGELINA MODEL COMPARISON REPORT (CNN vs SVM)
+=================================================================
+
+  Metric               | CNN-LSTM           | Classical SVM     
+-----------------------------------------------------------------
+  Train Accuracy       |  100.00%            |   99.93%
+  Test Accuracy (Noisy) |   98.87%            |   74.68%
+  Macro F1             |    0.9887           |    0.7430
+  Macro Precision      |    0.9892           |    0.7597
+  Macro Recall         |    0.9887           |    0.7468
+
+=================================================================
+  CNN CLASSIFICATION REPORT (TEST SET)
+=================================================================
+
+                  precision    recall  f1-score   support
+
+decaying_posture       0.96      1.00      0.98       155
+    good_posture       1.00      1.00      1.00       155
+       slouching       1.00      0.95      0.98       155
+       tech_neck       1.00      1.00      1.00       155
+
+        accuracy                           0.99       620
+       macro avg       0.99      0.99      0.99       620
+    weighted avg       0.99      0.99      0.99       620
+
+
+=================================================================
+  SVM CLASSIFICATION REPORT (TEST SET)
+=================================================================
+
+                  precision    recall  f1-score   support
+
+decaying_posture       0.78      0.65      0.71       155
+    good_posture       0.87      0.68      0.77       155
+       slouching       0.69      0.68      0.69       155
+       tech_neck       0.70      0.97      0.81       155
+
+        accuracy                           0.75       620
+       macro avg       0.76      0.75      0.74       620
+    weighted avg       0.76      0.75      0.74       620
