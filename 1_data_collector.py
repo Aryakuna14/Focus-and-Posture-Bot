@@ -34,6 +34,7 @@ import cv2
 import tkinter as tk
 from tkinter import messagebox
 import mediapipe as mp
+import numpy as np
 import pandas as pd
 import time
 logging.getLogger('absl').setLevel(logging.ERROR)
@@ -41,7 +42,8 @@ logging.getLogger('absl').setLevel(logging.ERROR)
 # ─────────────────────────────────────────────
 #  CONFIGURATION
 # ─────────────────────────────────────────────
-OUTPUT_CSV       = r"C:\Users\aryas\OneDrive\Desktop\final\posture_dataset.csv"
+BASE_DIR         = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_CSV       = os.path.join(BASE_DIR, "posture_dataset.csv")
 FRAMES_PER_LABEL = 60              # How many frames to capture per button press
 CAPTURE_DELAY_S  = 0.05            # Seconds between frame captures (~20 FPS effective)
 
@@ -295,7 +297,6 @@ def main():
                 # Key handling
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('c') and results.pose_landmarks:
-                    import numpy as np
                     baseline_features = np.array(extract_features(results.pose_landmarks.landmark))
                     print("  ⚖️  BASELINE CALIBRATED for this session.")
                 elif key in LABELS:

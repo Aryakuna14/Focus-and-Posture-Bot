@@ -1,62 +1,62 @@
 {
   "(A) Vision Only": {
-    "accuracy": 0.9745,
-    "macro_f1": 0.9717,
-    "macro_precision": 0.967,
-    "macro_recall": 0.9771,
-    "macro_fpr": 0.0092,
-    "macro_fnr": 0.0229,
+    "accuracy": 0.974,
+    "macro_f1": 0.966,
+    "macro_precision": 0.9549,
+    "macro_recall": 0.9793,
+    "macro_fpr": 0.0089,
+    "macro_fnr": 0.0207,
     "per_class_f1": {
-      "decaying_posture": 0.9596,
-      "good_posture": 0.9718,
-      "slouching": 0.9695,
-      "tech_neck": 0.986
+      "decaying_posture": 0.932,
+      "good_posture": 0.9683,
+      "slouching": 0.9725,
+      "tech_neck": 0.991
     },
     "per_class_auc": {
-      "decaying_posture": 0.9996,
-      "good_posture": 0.998,
-      "slouching": 0.9984,
-      "tech_neck": 0.9997
+      "decaying_posture": 0.9999,
+      "good_posture": 0.9989,
+      "slouching": 0.9992,
+      "tech_neck": 0.9999
     }
   },
   "(B) Vision + Activity": {
-    "accuracy": 0.978,
-    "macro_f1": 0.9693,
-    "macro_precision": 0.9637,
-    "macro_recall": 0.9757,
-    "macro_fpr": 0.0077,
-    "macro_fnr": 0.0243,
+    "accuracy": 0.9786,
+    "macro_f1": 0.9741,
+    "macro_precision": 0.9664,
+    "macro_recall": 0.9829,
+    "macro_fpr": 0.0075,
+    "macro_fnr": 0.0171,
     "per_class_f1": {
-      "decaying_posture": 0.9347,
-      "good_posture": 0.9782,
-      "slouching": 0.9754,
-      "tech_neck": 0.989
+      "decaying_posture": 0.9552,
+      "good_posture": 0.9748,
+      "slouching": 0.9735,
+      "tech_neck": 0.993
     },
     "per_class_auc": {
-      "decaying_posture": 0.9995,
-      "good_posture": 0.9987,
-      "slouching": 0.9981,
-      "tech_neck": 0.9997
+      "decaying_posture": 0.9999,
+      "good_posture": 0.9988,
+      "slouching": 0.999,
+      "tech_neck": 0.9999
     }
   },
   "(C) Full System (ANGELINA)": {
-    "accuracy": 0.9182,
-    "macro_f1": 0.8913,
-    "macro_precision": 0.9279,
-    "macro_recall": 0.8694,
-    "macro_fpr": 0.0305,
-    "macro_fnr": 0.1306,
+    "accuracy": 0.4688,
+    "macro_f1": 0.4479,
+    "macro_precision": 0.5194,
+    "macro_recall": 0.4747,
+    "macro_fpr": 0.1646,
+    "macro_fnr": 0.5253,
     "per_class_f1": {
-      "decaying_posture": 0.7883,
-      "good_posture": 0.9232,
-      "slouching": 0.9063,
-      "tech_neck": 0.9472
+      "decaying_posture": 0.1564,
+      "good_posture": 0.492,
+      "slouching": 0.5533,
+      "tech_neck": 0.5901
     },
     "per_class_auc": {
-      "decaying_posture": 0.9745,
-      "good_posture": 0.9924,
-      "slouching": 0.9903,
-      "tech_neck": 0.9969
+      "decaying_posture": 0.7128,
+      "good_posture": 0.6402,
+      "slouching": 0.7826,
+      "tech_neck": 0.7397
     }
   }
 }

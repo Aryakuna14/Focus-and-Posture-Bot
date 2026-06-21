@@ -1,5 +1,5 @@
 import sys
-if sys.stdout.encoding.lower() != 'utf-8':
+if sys.stdout is not None and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8')
 
 import cv2
@@ -22,9 +22,10 @@ except ImportError:
     SERIAL_AVAILABLE = False
     print("⚠️  pyserial not installed. Running in demo mode.")
 
-MODEL_PATH      = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_svm_model.pkl"
-SCALER_PATH     = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_scaler.pkl"
-LABEL_MAP_PATH  = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_label_map.pkl"
+BASE_DIR        = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH      = os.path.join(BASE_DIR, "angelina_svm_model.pkl")
+SCALER_PATH     = os.path.join(BASE_DIR, "angelina_scaler.pkl")
+LABEL_MAP_PATH  = os.path.join(BASE_DIR, "angelina_label_map.pkl")
 
 ESP32_PORT      = "COM11"
 ESP32_BAUD      = 115200
@@ -140,10 +141,14 @@ def main():
     last_trigger_time = 0.0
     last_dash_update  = 0.0
     frames_missing    = 0
+    baseline_features = None  # Personal calibration baseline
 
     def dash_sender(payload):
         try: requests.post(DASHBOARD_URL, json=payload, timeout=0.5)
         except: pass
+
+    print("\n  🎯  Running real-time inference. Press 'C' to calibrate, 'Q' to quit.")
+    print("  ⚠️  You MUST press 'C' while sitting straight to calibrate before inference works!\n")
 
     label = "unknown"
     confidence = 0.0
@@ -160,12 +165,17 @@ def main():
             if results.pose_landmarks:
                 mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
                 features = extract_features(results.pose_landmarks.landmark)
-                if not np.isnan(features).any():
-                    X_scaled = scaler.transform(features.reshape(1, -1))
+                if not np.isnan(features).any() and baseline_features is not None:
+                    # Subtract personal baseline (matches training pipeline)
+                    delta_features = features - baseline_features
+                    X_scaled = scaler.transform(delta_features.reshape(1, -1))
                     probs = clf.predict_proba(X_scaled)[0]
                     pred_idx = np.argmax(probs)
                     confidence = probs[pred_idx]
                     label = label_map.get(pred_idx, "unknown")
+                elif baseline_features is None:
+                    label = "CALIBRATE: Sit straight & press 'C'"
+                    confidence = 0.0
                 frames_missing = 0
             else:
                 frames_missing += 1
@@ -201,7 +211,13 @@ def main():
                 threading.Thread(target=dash_sender, args=({'label':label, 'confidence':float(confidence), 'triggered':just_triggered, 'alert_frac':float(alert_bar_frac)},), daemon=True).start()
 
             cv2.imshow("PROJECT ANGELINA — Live Inference (SVM)", frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'): break
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('c') and results.pose_landmarks:
+                raw_features = extract_features(results.pose_landmarks.landmark)
+                if not np.isnan(raw_features).any():
+                    baseline_features = raw_features
+                    print("  ⚖️  BASELINE CALIBRATED — inference is now active!")
+            elif key == ord('q'): break
     finally:
         cap.release()
         cv2.destroyAllWindows()

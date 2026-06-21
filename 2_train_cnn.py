@@ -29,11 +29,12 @@ from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-INPUT_CSV = r"C:\Users\aryas\OneDrive\Desktop\final\posture_dataset.csv"
-MODEL_OUT = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_cnn_model.keras"
-SCALER_OUT = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_scaler.pkl"
-LABEL_ENCODER_OUT = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_label_encoder.pkl"
-LABEL_MAP_OUT = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_label_map.pkl"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+INPUT_CSV = os.path.join(BASE_DIR, "posture_dataset.csv")
+MODEL_OUT = os.path.join(BASE_DIR, "angelina_cnn_model.keras")
+SCALER_OUT = os.path.join(BASE_DIR, "angelina_scaler.pkl")
+LABEL_ENCODER_OUT = os.path.join(BASE_DIR, "angelina_label_encoder.pkl")
+LABEL_MAP_OUT = os.path.join(BASE_DIR, "angelina_label_map.pkl")
 
 WINDOW_SIZE = 30
 LABEL_COL = "label"

@@ -23,9 +23,10 @@ FIND YOUR ESP32 PORT:
 """
 
 import sys
-if sys.stdout.encoding.lower() != 'utf-8':
+if sys.stdout is not None and hasattr(sys.stdout, 'encoding') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8')
 
+import os
 import cv2
 import mediapipe as mp
 import numpy as np
@@ -52,9 +53,10 @@ except ImportError:
 # ─────────────────────────────────────────────
 #  CONFIGURATION — Edit these
 # ─────────────────────────────────────────────
-MODEL_PATH      = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_cnn_model.keras"
-SCALER_PATH     = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_scaler.pkl"
-LABEL_MAP_PATH  = r"C:\Users\aryas\OneDrive\Desktop\final\angelina_label_map.pkl"
+BASE_DIR        = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH      = os.path.join(BASE_DIR, "angelina_cnn_model.keras")
+SCALER_PATH     = os.path.join(BASE_DIR, "angelina_scaler.pkl")
+LABEL_MAP_PATH  = os.path.join(BASE_DIR, "angelina_label_map.pkl")
 
 WINDOW_SIZE     = 30              # Must match 2_train_cnn.py
 
@@ -237,6 +239,7 @@ def main():
     last_trigger_time = 0.0       # Timestamp of last trigger send
     last_dash_update  = 0.0       # Throttle dashboard requests
     frames_missing    = 0         # Count consecutive dropped frames
+    baseline_features = None      # Personal calibration baseline
 
     def dash_sender(payload):
         try:
@@ -244,7 +247,8 @@ def main():
         except Exception:
             pass
 
-    print("\n  🎯  Running real-time inference. Press 'Q' to quit.\n")
+    print("\n  🎯  Running real-time inference. Press 'C' to calibrate, 'Q' to quit.\n")
+    print("  ⚠️  You MUST press 'C' while sitting straight to calibrate before inference works!\n")
 
     label = "unknown"
     confidence = 0.0
@@ -276,9 +280,11 @@ def main():
 
                 # ── Feature extraction + inference ────────────────
                 features = extract_features(results.pose_landmarks.landmark)
-                if not np.isnan(features).any():
+                if not np.isnan(features).any() and baseline_features is not None:
+                    # Subtract personal baseline (matches training pipeline)
+                    delta_features = features - baseline_features
                     # Scale the single frame
-                    X_scaled = scaler.transform(features.reshape(1, -1))[0]
+                    X_scaled = scaler.transform(delta_features.reshape(1, -1))[0]
                     feature_buffer.append(X_scaled)
 
                     # Predict only when we have a full window
@@ -293,6 +299,9 @@ def main():
                     else:
                         label = "buffering..."
                         confidence = 0.0
+                elif baseline_features is None:
+                    label = "CALIBRATE: Sit straight & press 'C'"
+                    confidence = 0.0
 
                 frames_missing = 0
             else:
@@ -344,7 +353,14 @@ def main():
 
             cv2.imshow("PROJECT ANGELINA — Live Inference", frame)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('c') and results.pose_landmarks:
+                raw_features = extract_features(results.pose_landmarks.landmark)
+                if not np.isnan(raw_features).any():
+                    baseline_features = raw_features
+                    feature_buffer.clear()  # Reset buffer after recalibration
+                    print("  ⚖️  BASELINE CALIBRATED — inference is now active!")
+            elif key == ord('q'):
                 break
 
     finally:
