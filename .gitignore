@@ -11,6 +11,7 @@ env/
 # Local environment files
 .env
 .env.*
+!.env.example
 
 # Editor and OS files
 .vscode/
@@ -20,4 +21,15 @@ Thumbs.db
 
 # Runtime logs
 *.log
+
+# Generated datasets and model artifacts
+posture_dataset*.csv
+*.pkl
+*.keras
+*.h5
+
+# Generated evaluation output
+evaluation_results/
+*_confusion_matrix.png
+angelina_confusion_matrix.png
 
