@@ -12,14 +12,29 @@ When poor posture is detected over a sustained period, the bot sends an alert to
 - **Live Web Dashboard:** A Flask + SocketIO dashboard (`http://localhost:5001`) to track posture sessions, confidence scores, and alert logs in real-time.
 - **Data Collection Tool:** Built-in tool for capturing and labeling your own posture data to train custom models.
 
+```mermaid
+flowchart TD
+    A[Webcam] --> B[MediaPipe Pose]
+    B --> C[Feature Extraction]
+    C --> D[CNN/SVM Model]
+    D --> E[Posture Label]
+    E --> F[Dashboard Flask+SocketIO]
+    E --> G[ESP32 Haptic Alert if bad posture sustained]
+```
+
 ## Project Structure
 
 - `1_data_collector.py`: Collects skeletal landmarks from the webcam and saves them to `posture_dataset.csv`.
 - `2_train_cnn.py` / `2_train_svm.py`: Scripts to train the CNN and SVM models using the collected dataset.
 - `3_realtime_inference.py` / `3_svm_inference.py`: Runs real-time inference on the webcam feed and sends triggers to the ESP32 and Dashboard.
-- `4_esp32_angelina.ino`: Arduino sketch for the ESP32 to receive Serial commands and trigger the motor/buzzer.
+- `esp32_haptics/esp32_haptics.ino`: Arduino sketch for the ESP32 to receive Serial commands and trigger the motor/buzzer.
 - `5_dashboard.py`: Runs the real-time web dashboard.
 - `6_evaluation.py` / `6b_ablation_study.py` / `7_compare_models.py`: Scripts for model evaluation and comparison.
+- `utils.py`: Shared utilities module (feature extraction, serial management, HUD drawing).
+- `config.py`: Centralized runtime configuration (reads from environment variables).
+- `requirements.txt`: Python dependency list with version bounds.
+- `SECURITY.md`: Security and privacy documentation.
+- `LICENSE`: MIT License.
 - `*.bat`: Convenient batch scripts to quickly run the various Python scripts.
 
 ## Installation & Setup
@@ -34,7 +49,7 @@ When poor posture is detected over a sustained period, the bot sends an alert to
 Install the required Python packages:
 
 ```bash
-pip install opencv-python mediapipe pandas numpy joblib pyserial flask flask-socketio tensorflow scikit-learn matplotlib seaborn
+pip install -r requirements.txt
 ```
 
 *(Note: TensorFlow is required if using the CNN model. For SVM only, `scikit-learn` is sufficient).*
@@ -43,10 +58,19 @@ pip install opencv-python mediapipe pandas numpy joblib pyserial flask flask-soc
 
 1. Connect your ESP32 to your computer.
 2. Wire up the hardware:
-   - **Pin 23:** Transistor Base (for vibration motor)
-   - **Pin 22:** Buzzer (+)
-3. Open `4_esp32_angelina.ino` in the Arduino IDE and flash it to your ESP32.
+   - **GPIO 18:** Transistor Base (for vibration motor)
+   - **GPIO 19:** Buzzer (+)
+3. Open `esp32_haptics/esp32_haptics.ino` in the Arduino IDE and flash it to your ESP32.
 4. Note the COM port of your ESP32 (e.g., `COM3` on Windows, `/dev/ttyUSB0` on Linux). The Python script will automatically attempt to find it or you can specify it in the inference script.
+
+## Configuration
+
+You can customize the application behavior via environment variables (see `config.py` for details). Key variables include:
+
+- `ANGELINA_ESP32_PORT`: Set the COM port manually (e.g., `COM3`).
+- `ANGELINA_ALERT_HOLD_S`: Time in seconds poor posture must be held before an alert triggers.
+- `ANGELINA_COOLDOWN_S`: Cooldown time in seconds between alerts.
+- `ANGELINA_DASHBOARD_PORT`: Port for the live dashboard (default is `5001`).
 
 ## Usage Guide
 
@@ -97,4 +121,4 @@ These will generate metrics like confusion matrices and classification reports.
 
 ## License
 
-This project is created for personal neural-ergonomic enhancement. Feel free to modify and adapt it to your needs!
+This project is licensed under the MIT License. See the `LICENSE` file for details.

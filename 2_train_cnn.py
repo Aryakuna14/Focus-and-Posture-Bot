@@ -27,6 +27,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
+from utils import create_sliding_windows
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INPUT_CSV = os.path.join(BASE_DIR, "posture_dataset.csv")
@@ -39,17 +40,6 @@ WINDOW_SIZE = 30
 LABEL_COL = "label"
 DROP_COLS = ["subject_id"]
 
-def create_sliding_windows(X, y, window_size):
-    """
-    X: (N, features)
-    y: (N,)
-    Returns X_out: (N-window_size+1, window_size, features), y_out: (N-window_size+1,)
-    """
-    X_out, y_out = [], []
-    for i in range(len(X) - window_size + 1):
-        X_out.append(X[i : i + window_size])
-        y_out.append(y[i + window_size - 1]) # Label of the LAST frame in the window
-    return np.array(X_out), np.array(y_out)
 
 def load_and_preprocess(csv_path):
     os.system('cls' if os.name == 'nt' else 'clear')

@@ -21,25 +21,14 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-# Paths
-BASE_DIR       = os.path.dirname(os.path.abspath(__file__))
-INPUT_CSV      = os.path.join(BASE_DIR, "posture_dataset.csv")
-CNN_MODEL_PATH = os.path.join(BASE_DIR, "angelina_cnn_model.keras")
-SVM_MODEL_PATH = os.path.join(BASE_DIR, "angelina_svm_model.pkl")
-SCALER_PATH    = os.path.join(BASE_DIR, "angelina_scaler.pkl")
-LABEL_MAP_PATH = os.path.join(BASE_DIR, "angelina_label_map.pkl")
-OUTPUT_DIR     = os.path.join(BASE_DIR, "evaluation_results")
+from utils import create_sliding_windows
+from config import (CNN_MODEL_PATH, SVM_MODEL_PATH, SCALER_PATH, LABEL_MAP_PATH, WINDOW_SIZE, BASE_DIR)
 
-WINDOW_SIZE = 30
+INPUT_CSV  = os.path.join(BASE_DIR, "posture_dataset.csv")
+OUTPUT_DIR = os.path.join(BASE_DIR, "evaluation_results")
+
 LABEL_COL   = "label"
 DROP_COLS   = ["subject_id"]
-
-def create_sliding_windows(X, y, window_size):
-    X_out, y_out = [], []
-    for i in range(len(X) - window_size + 1):
-        X_out.append(X[i : i + window_size])
-        y_out.append(y[i + window_size - 1])
-    return np.array(X_out), np.array(y_out)
 
 def plot_comparison_bar(metrics, save_path):
     models = list(metrics.keys())

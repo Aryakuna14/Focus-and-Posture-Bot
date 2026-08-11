@@ -28,10 +28,11 @@ import json
 from datetime import datetime
 from collections import deque
 import os
+import config
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
+socketio = SocketIO(app, cors_allowed_origins=f"http://localhost:{config.DASHBOARD_PORT}", async_mode='threading')
 
 # ─────────────────────────────────────────────
 #  SHARED STATE (updated by Script 3 via API)
@@ -164,7 +165,7 @@ if __name__ == '__main__':
     print("  Open your browser to: http://localhost:5001")
     print("  Run Script 3 in another terminal to feed data.")
     print("="*55 + "\n")
-    socketio.run(app, host='127.0.0.1', port=5001, debug=False)
+    socketio.run(app, host=config.DASHBOARD_HOST, port=config.DASHBOARD_PORT, debug=False)
 
 
 """

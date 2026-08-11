@@ -46,6 +46,7 @@ import matplotlib
 matplotlib.use('Agg')          # Non-interactive backend — works without display
 import matplotlib.pyplot as plt
 import seaborn as sns
+from utils import create_sliding_windows
 
 # ─────────────────────────────────────────────
 #  PATHS  (must match 2_train_cnn.py)
@@ -64,12 +65,6 @@ DROP_COLS   = ["subject_id"]
 # ─────────────────────────────────────────────
 #  HELPERS
 # ─────────────────────────────────────────────
-def create_sliding_windows(X, y, window_size):
-    X_out, y_out = [], []
-    for i in range(len(X) - window_size + 1):
-        X_out.append(X[i : i + window_size])
-        y_out.append(y[i + window_size - 1])
-    return np.array(X_out), np.array(y_out)
 
 
 def compute_fpr_fnr(y_true, y_pred, classes):

@@ -38,6 +38,8 @@ import numpy as np
 import pandas as pd
 import time
 
+from utils import LANDMARK_INDICES, extract_features
+
 # ─────────────────────────────────────────────
 #  CONFIGURATION
 # ─────────────────────────────────────────────
@@ -79,21 +81,6 @@ def get_next_subject_id():
 
 SUBJECT_ID = get_next_subject_id()
 
-# MediaPipe Pose landmark indices we care about (upper-body focused)
-# Full list: https://developers.google.com/mediapipe/solutions/vision/pose_landmarker
-LANDMARK_INDICES = [
-    0,   # nose
-    2,   # left_eye_inner
-    5,   # right_eye_inner
-    7,   # left_ear
-    8,   # right_ear
-    11,  # left_shoulder
-    12,  # right_shoulder
-    13,  # left_elbow
-    14,  # right_elbow
-    23,  # left_hip
-    24,  # right_hip
-]
 
 LABELS = {
     ord('g'): 'good_posture',
@@ -108,56 +95,6 @@ baseline_features = None
 # ─────────────────────────────────────────────
 #  FEATURE EXTRACTION
 # ─────────────────────────────────────────────
-def extract_features(landmarks):
-    """
-    Flatten x, y, z, visibility for each chosen landmark into a 1D feature vector.
-    Also computes normalised derived angles for richer ML features.
-    Returns: list of floats (feature vector)
-    """
-    features = []
-    for idx in LANDMARK_INDICES:
-        lm = landmarks[idx]
-        features.extend([lm.x, lm.y, lm.z, lm.visibility])
-
-    # ── Derived geometric features ──────────────────────────────
-    # (These give the SVM more discriminative power)
-
-    nose       = landmarks[0]
-    l_shoulder = landmarks[11]
-    r_shoulder = landmarks[12]
-    l_ear      = landmarks[7]
-    r_ear      = landmarks[8]
-    l_hip      = landmarks[23]
-    r_hip      = landmarks[24]
-
-    # 1. Shoulder midpoint Y vs Hip midpoint Y  (vertical slouch proxy)
-    shoulder_mid_y = (l_shoulder.y + r_shoulder.y) / 2
-    hip_mid_y      = (l_hip.y + r_hip.y) / 2
-    torso_length   = abs(hip_mid_y - shoulder_mid_y) + 1e-6  # avoid div/0
-
-    # 2. Nose Y relative to shoulder midpoint (head forward/tech neck proxy)
-    nose_to_shoulder_y = (nose.y - shoulder_mid_y) / torso_length
-
-    # 3. Ear Y relative to shoulder Y (forward head posture)
-    ear_mid_y          = (l_ear.y + r_ear.y) / 2
-    ear_to_shoulder_y  = (ear_mid_y - shoulder_mid_y) / torso_length
-
-    # 4. Shoulder width (slouching reduces apparent width from camera POV)
-    shoulder_width = abs(r_shoulder.x - l_shoulder.x)
-
-    # 5. Shoulder roll — difference in shoulder Y (asymmetric slouch)
-    shoulder_roll  = l_shoulder.y - r_shoulder.y
-
-    features.extend([
-        nose_to_shoulder_y,
-        ear_to_shoulder_y,
-        shoulder_width,
-        shoulder_roll,
-        torso_length,
-    ])
-
-    return features
-
 
 def build_header():
     """Build CSV column headers matching extract_features() output."""
@@ -282,7 +219,7 @@ def main():
                 # Capture logic
                 if active_label and frames_left > 0 and results.pose_landmarks:
                     features = extract_features(results.pose_landmarks.landmark)
-                    delta_features = list(np.array(features) - baseline_features)
+                    delta_features = (features - baseline_features).tolist()
                     all_rows.append(delta_features + [active_label, current_subject])
                     frames_left -= 1
 
@@ -296,7 +233,7 @@ def main():
                 # Key handling
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('c') and results.pose_landmarks:
-                    baseline_features = np.array(extract_features(results.pose_landmarks.landmark))
+                    baseline_features = extract_features(results.pose_landmarks.landmark)
                     print("  ⚖️  BASELINE CALIBRATED for this session.")
                 elif key in LABELS:
                     if baseline_features is None:
