@@ -27,9 +27,10 @@ import time
 import json
 from datetime import datetime
 from collections import deque
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'angelina_secret'
+app.config['SECRET_KEY'] = os.urandom(24)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # ─────────────────────────────────────────────
@@ -163,7 +164,7 @@ if __name__ == '__main__':
     print("  Open your browser to: http://localhost:5001")
     print("  Run Script 3 in another terminal to feed data.")
     print("="*55 + "\n")
-    socketio.run(app, host='0.0.0.0', port=5001, debug=False, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='127.0.0.1', port=5001, debug=False)
 
 
 """

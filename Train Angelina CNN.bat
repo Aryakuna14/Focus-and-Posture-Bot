@@ -9,9 +9,18 @@ echo  \___  / \____/ \___  ^>____//____  ^>^|___  (____  /___^|  /\____ ^|   ^|_
 echo      \/             \/           \/     \/     \/     \/      \/                      \/                          \/          \/             
 cd /d "%~dp0"
 
+rem -- Auto-detect Python: prefer local venv, fall back to system python --
+if exist "%~dp0venv\Scripts\python.exe" (
+    set PYTHON="%~dp0venv\Scripts\python.exe"
+) else if exist "%~dp0.venv\Scripts\python.exe" (
+    set PYTHON="%~dp0.venv\Scripts\python.exe"
+) else (
+    set PYTHON=python
+)
+
 :RUN_SCRIPT
 cls
-"C:\Users\aryas\OneDrive\Desktop\codes\angelina\angelina_env\Scripts\python.exe" 2_train_cnn.py
+%PYTHON% 2_train_cnn.py
 
 :PROMPT
 echo.

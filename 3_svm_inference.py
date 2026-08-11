@@ -8,7 +8,6 @@ import numpy as np
 import joblib
 import time
 import threading
-import sys
 import requests
 import os
 
@@ -145,7 +144,7 @@ def main():
 
     def dash_sender(payload):
         try: requests.post(DASHBOARD_URL, json=payload, timeout=0.5)
-        except: pass
+        except Exception: pass
 
     print("\n  🎯  Running real-time inference. Press 'C' to calibrate, 'Q' to quit.")
     print("  ⚠️  You MUST press 'C' while sitting straight to calibrate before inference works!\n")

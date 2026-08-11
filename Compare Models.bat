@@ -2,7 +2,15 @@
 title Angelina Model Comparison (CNN vs SVM)
 color 0B
 cd /d "%~dp0"
-set PYTHON="C:\Users\aryas\OneDrive\Desktop\codes\angelina\angelina_env\Scripts\python.exe"
+
+rem -- Auto-detect Python: prefer local venv, fall back to system python --
+if exist "%~dp0venv\Scripts\python.exe" (
+    set PYTHON="%~dp0venv\Scripts\python.exe"
+) else if exist "%~dp0.venv\Scripts\python.exe" (
+    set PYTHON="%~dp0.venv\Scripts\python.exe"
+) else (
+    set PYTHON=python
+)
 
 echo  ============================================================
 echo     PROJECT ANGELINA — Architecture Comparison

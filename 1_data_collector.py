@@ -37,7 +37,6 @@ import mediapipe as mp
 import numpy as np
 import pandas as pd
 import time
-logging.getLogger('absl').setLevel(logging.ERROR)
 
 # ─────────────────────────────────────────────
 #  CONFIGURATION

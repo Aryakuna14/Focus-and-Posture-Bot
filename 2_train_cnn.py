@@ -24,7 +24,6 @@ from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, LSTM, Dense, Dropout, Flatten
 from keras.utils import to_categorical
 from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns

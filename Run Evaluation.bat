@@ -9,13 +9,22 @@ echo  \___  / \____/ \___  ^>____//____  ^>^|___  (____  /___^|  /\____ ^|   ^|_
 echo      \/             \/           \/     \/     \/     \/      \/                      \/                          \/          \/             
 cd /d "%~dp0"
 
+rem -- Auto-detect Python: prefer local venv, fall back to system python --
+if exist "%~dp0venv\Scripts\python.exe" (
+    set PYTHON="%~dp0venv\Scripts\python.exe"
+) else if exist "%~dp0.venv\Scripts\python.exe" (
+    set PYTHON="%~dp0.venv\Scripts\python.exe"
+) else (
+    set PYTHON=python
+)
+
 echo.
 echo  ============================================================
 echo     PROJECT ANGELINA — IEEE Evaluation ^& Baseline Comparison
 echo  ============================================================
 echo.
 
-"C:\Users\aryas\OneDrive\Desktop\codes\angelina\angelina_env\Scripts\python.exe" 6_evaluation.py
+%PYTHON% 6_evaluation.py
 
 echo.
 echo  ============================================================

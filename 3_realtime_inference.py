@@ -34,7 +34,6 @@ import joblib
 import time
 import threading
 import collections
-import sys
 import requests
 import tensorflow as tf
 
